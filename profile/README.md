@@ -47,6 +47,59 @@
 
 ---
 
+### Topology
+
+A NATS supercluster: three regional clusters (3 nodes each, full-mesh routes),
+linked region-to-region by gateways, fronted by Cloudflare. Clients reach the
+nearest region over WebSocket; the desktop app runs an embedded leaf node.
+
+```mermaid
+flowchart TB
+    desktop["🖥️ Tauri desktop<br/>(embedded leaf)"]
+    browser["🌐 Browser (wss)"]
+    backend["⚙️ Spring Boot services"]
+    auth["🔑 Spring Authorization Server<br/>(OAuth2 · NATS auth-callout)"]
+
+    edge{{"☁️ Cloudflare edge"}}
+
+    desktop --> edge
+    browser --> edge
+    backend --> edge
+
+    edge -->|japan-1| JP
+    edge -->|au| AU
+    edge -->|singapore-1| SG
+
+    subgraph JP["🇯🇵 japan"]
+        direction LR
+        j1((n1)) --- j2((n2)) --- j3((n3)) --- j1
+    end
+    subgraph AU["🇦🇺 australia"]
+        direction LR
+        a1((n1)) --- a2((n2)) --- a3((n3)) --- a1
+    end
+    subgraph SG["🇸🇬 singapore"]
+        direction LR
+        s1((n1)) --- s2((n2)) --- s3((n3)) --- s1
+    end
+
+    JP <==>|gateway| AU
+    AU <==>|gateway| SG
+    SG <==>|gateway| JP
+
+    auth -.->|verifies tokens| edge
+
+    classDef edge fill:#F38020,stroke:#fff,stroke-width:2px,color:#fff;
+    classDef region fill:#0d2840,stroke:#27AAE1,color:#e6edf3;
+    classDef cli fill:#161b22,stroke:#8b949e,color:#e6edf3;
+    classDef node fill:#10302a,stroke:#3fb950,color:#3fb950;
+
+    class edge edge;
+    class JP,AU,SG region;
+    class desktop,browser,backend,auth cli;
+    class j1,j2,j3,a1,a2,a3,s1,s2,s3 node;
+```
+
 ### Live status
 
 ![mesh](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fmesh&style=flat-square)
