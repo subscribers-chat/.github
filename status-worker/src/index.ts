@@ -19,6 +19,10 @@ interface Env {
   NATS_WS_HOSTS: string;
   /** Optional JSON array of tunnel names to count. Empty/unset = all tunnels. */
   MESH_TUNNELS?: string;
+  /** Jenkins base URL, e.g. https://jenkins.subscribers.chat */
+  JENKINS_URL?: string;
+  /** Nexus base URL, e.g. https://nexus.subscribers.chat */
+  NEXUS_URL?: string;
 }
 
 interface ShieldsBadge {
@@ -139,6 +143,21 @@ async function natsBadge(env: Env): Promise<Response> {
   return badge({ schemaVersion: 1, label: "nats", message: `${up}/${total} up`, color: colorFor(up, total) });
 }
 
+/** GET an HTTP health path; "up" if it answers OK. */
+async function httpBadge(label: string, base: string | undefined, path: string): Promise<Response> {
+  if (!base) {
+    return badge({ schemaVersion: 1, label, message: "not configured", color: "lightgrey", isError: true });
+  }
+  let ok = false;
+  try {
+    const res = await fetch(`${base.replace(/\/$/, "")}${path}`, { signal: AbortSignal.timeout(8000) });
+    ok = res.ok;
+  } catch {
+    ok = false;
+  }
+  return badge({ schemaVersion: 1, label, message: ok ? "up" : "down", color: ok ? "brightgreen" : "red" });
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url);
@@ -148,8 +167,12 @@ export default {
         return meshBadge(env);
       case "/nats":
         return natsBadge(env);
+      case "/jenkins":
+        return httpBadge("jenkins", env.JENKINS_URL, "/login");
+      case "/nexus":
+        return httpBadge("nexus", env.NEXUS_URL, "/service/rest/v1/status");
       case "/":
-        return Response.json({ routes: ["/mesh", "/nats"] });
+        return Response.json({ routes: ["/mesh", "/nats", "/jenkins", "/nexus"] });
       default:
         return new Response("not found", { status: 404 });
     }

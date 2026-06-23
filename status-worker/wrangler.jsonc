@@ -15,7 +15,9 @@
     "MESH_TUNNELS": "[\"australia\",\"home\",\"japan\",\"singapore\"]",
     // Public NATS WebSocket gateway hostnames. The Worker opens a wss connection
     // to each and treats the NATS INFO frame as "alive".
-    "NATS_WS_HOSTS": "[\"japan-1.subscribers.chat\",\"au.subscribers.chat\",\"singapore-1.subscribers.chat\"]"
+    "NATS_WS_HOSTS": "[\"japan-1.subscribers.chat\",\"au.subscribers.chat\",\"singapore-1.subscribers.chat\"]",
+    "JENKINS_URL": "https://jenkins.subscribers.chat",
+    "NEXUS_URL": "https://nexus.subscribers.chat"
   }
 
   // After deploy, map a custom hostname so the badge URL is stable, e.g.:

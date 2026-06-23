@@ -9,11 +9,12 @@
 <br><br>
 
 ![Currently Under Development](https://img.shields.io/badge/Currently_Under_Development-FF6B00?style=flat-square)
+![Solo Developer](https://img.shields.io/badge/Solo_Developer-1-8A2BE2?style=flat-square&logo=github&logoColor=white)
 <img alt="Philippines" src="https://flagcdn.com/24x18/ph.png" height="18">
 
 </div>
 
-> My attempt at building a fast and reliable application with built-in chat and industry-specific features.
+> My attempt at building a fast and reliable application with zero-knowledge, end-to-end encrypted chat and industry-specific features.
 
 ### Backend
 ![Java 25](https://img.shields.io/badge/Java_25-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
@@ -104,6 +105,8 @@ flowchart TB
 
 ![mesh](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fmesh&style=flat-square)
 ![nats](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fnats&style=flat-square)
+![jenkins](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fjenkins&style=flat-square&logo=jenkins&logoColor=white)
+![nexus](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fnexus&style=flat-square&logo=sonatype&logoColor=white)
 
 ### Organization at a glance
 
