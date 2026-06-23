@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "status-badges",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-06-01",
+  "account_id": "12c0b2b480ff34fcd7eeaeb0c9b0eec8",
+  "observability": { "enabled": true },
+
+  // Non-secret config. CF_API_TOKEN is a secret — set it with:
+  //   wrangler secret put CF_API_TOKEN
+  "vars": {
+    "CF_ACCOUNT_ID": "12c0b2b480ff34fcd7eeaeb0c9b0eec8",
+    // Tunnels to count in the /mesh badge. Empty array = count all. Here we
+    // pin the prod servers and exclude the dev-machine tunnel.
+    "MESH_TUNNELS": "[\"australia\",\"home\",\"japan\",\"singapore\"]",
+    // Public NATS WebSocket gateway hostnames. The Worker opens a wss connection
+    // to each and treats the NATS INFO frame as "alive".
+    "NATS_WS_HOSTS": "[\"japan-1.subscribers.chat\",\"au.subscribers.chat\",\"singapore-1.subscribers.chat\"]"
+  }
+
+  // After deploy, map a custom hostname so the badge URL is stable, e.g.:
+  // "routes": [{ "pattern": "status.subscribers.chat", "custom_domain": true }]
+}

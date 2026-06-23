@@ -6,10 +6,14 @@
   <img alt="subscribers.chat" src="./assets/brand/horizontal-inline/light.svg" height="56">
 </picture>
 
+<br><br>
+
+![Currently Under Development](https://img.shields.io/badge/Currently_Under_Development-FF6B00?style=flat-square)
+<img alt="Philippines" src="https://flagcdn.com/24x18/ph.png" height="18">
+
 </div>
 
-> A polyglot, event-driven platform — Spring Boot services, a React/Tauri client, and a
-> Go NATS sidecar — built end-to-end with the security and reliability decisions owned, not just the features.
+> My attempt at building a fast and reliable application with built-in chat and industry-specific features.
 
 ### Backend
 ![Java 25](https://img.shields.io/badge/Java_25-ED8B00?style=flat-square&logo=openjdk&logoColor=white)
@@ -43,6 +47,11 @@
 
 ---
 
+### Live status
+
+![mesh](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fmesh&style=flat-square)
+![nats](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fnats&style=flat-square)
+
 ### Organization at a glance
 
 <!-- start organization badges -->
@@ -50,4 +59,4 @@
 
 ---
 
-<sub>OAuth2/OIDC authorization server · transactional outbox → JetStream · RFC 8252 native desktop auth · native media pipeline in Rust</sub>
+<sub>Working on: OAuth2/OIDC auth · transactional outbox → JetStream · RFC 8252 native desktop auth · a Rust media pipeline</sub>
