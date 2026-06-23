@@ -1,0 +1,105 @@
+name: remote-ssh
+
+# Reusable workflow: connect to a server over SSH and run a command.
+#
+# This is the GitHub Actions twin of the Jenkins `withCredentials(sshUserPrivateKey...)`
+# blocks (creds `vps-contabo` / `do-droplets`): plain key auth straight to the box's
+# public IP, `StrictHostKeyChecking=accept-new`. Set `via_cloudflare: true` to instead
+# tunnel through Cloudflare Access for Infrastructure (uses a service token + the SSH CA
+# trust installed by enable-access-ssh.sh) — useful when a box has no public SSH port.
+#
+# Call it from any repo in the org:
+#
+#   jobs:
+#     deploy-jp:
+#       uses: subscribers-chat/.github/.github/workflows/remote-ssh.yml@main
+#       with:
+#         host: 84.247.152.81          # Contabo JP (prod)
+#         user: root
+#         run: |
+#           cd /opt/authorization-service/contabo-region
+#           docker compose up -d --remove-orphans
+#           docker compose ps
+#       secrets:
+#         SSH_PRIVATE_KEY: ${{ secrets.VPS_CONTABO_KEY }}
+
+on:
+  workflow_call:
+    inputs:
+      host:
+        description: 'Remote host (IP or DNS name)'
+        required: true
+        type: string
+      user:
+        description: 'SSH user on the remote host'
+        required: false
+        default: root
+        type: string
+      run:
+        description: 'Command(s) to run on the remote host'
+        required: true
+        type: string
+      environment:
+        description: 'GitHub Environment to run under (approvals / scoped secrets)'
+        required: false
+        type: string
+      via_cloudflare:
+        description: 'Tunnel through Cloudflare Access instead of connecting directly'
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      SSH_PRIVATE_KEY:
+        description: 'Private key the remote sshd accepts (matches the Jenkins ssh cred)'
+        required: true
+      CF_ACCESS_CLIENT_ID:
+        description: 'Cloudflare Access service token id (only when via_cloudflare: true)'
+        required: false
+      CF_ACCESS_CLIENT_SECRET:
+        description: 'Cloudflare Access service token secret (only when via_cloudflare: true)'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  remote:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+      CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+    steps:
+      - name: Install cloudflared
+        if: ${{ inputs.via_cloudflare }}
+        run: |
+          curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 \
+            -o /usr/local/bin/cloudflared
+          chmod +x /usr/local/bin/cloudflared
+          cloudflared --version
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          {
+            echo "Host ${{ inputs.host }}"
+            echo "  User ${{ inputs.user }}"
+            echo "  IdentityFile ~/.ssh/id_deploy"
+            echo "  IdentitiesOnly yes"
+            echo "  StrictHostKeyChecking accept-new"
+            echo "  ConnectTimeout 10"
+            if [ "${{ inputs.via_cloudflare }}" = "true" ]; then
+              echo "  ProxyCommand cloudflared access ssh --hostname %h"
+            fi
+          } > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Run remote command
+        run: |
+          ssh ${{ inputs.host }} 'bash -seuo pipefail' <<'REMOTE'
+          ${{ inputs.run }}
+          REMOTE
