@@ -1,0 +1,39 @@
+# /etc/systemd/system/node-agent.service
+#
+#   install -m744 dist/node-agent-linux-amd64 /usr/local/bin/node-agent
+#   mkdir -p /etc/node-agent && cp node-agent.env.example /etc/node-agent/node-agent.env
+#   # ... drop the node's .creds at /etc/node-agent/node.creds, then:
+#   systemctl daemon-reload && systemctl enable --now node-agent
+#
+[Unit]
+Description=subscribers.chat host agent (node-agent)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/node-agent/node-agent.env
+ExecStart=/usr/local/bin/node-agent
+Restart=always
+RestartSec=3
+
+# the agent never needs root; runs as its own user
+DynamicUser=yes
+# the credential is owned by root and readable by the dynamic user via this dir
+ConfigurationDirectory=node-agent
+
+# hardening — this process holds a credential and watches for intrusion,
+# so it should have as little reach as possible
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target

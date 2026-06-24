@@ -1,0 +1,10 @@
+# build output
+/bin/
+/dist/
+node-agent
+node-agent.exe
+
+# local secrets — never commit a node credential or env file
+*.creds
+*.env
+!*.env.example
