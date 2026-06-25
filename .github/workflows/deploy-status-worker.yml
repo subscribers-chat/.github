@@ -1,0 +1,15 @@
+name: deploy-status-worker
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["status-worker/**"]
+
+jobs:
+  deploy:
+    uses: subscribers-chat/workflow/.github/workflows/deploy-cloudflare.yml@main
+    with:
+      working-directory: status-worker
+      command: deploy
+    secrets: inherit
