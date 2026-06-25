@@ -67,9 +67,9 @@ flowchart TB
     browser --> edge
     backend --> edge
 
-    edge -->|japan-1| JP
-    edge -->|au| AU
-    edge -->|singapore-1| SG
+    edge -->|wss-japan| JP
+    edge -->|wss-australia| AU
+    edge -->|wss-singapore| SG
 
     subgraph JP["🇯🇵 japan"]
         direction LR
@@ -103,10 +103,10 @@ flowchart TB
 
 ### Live status
 
-![mesh](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fmesh&style=flat-square)
-![nats](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fnats&style=flat-square)
-![jenkins](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fjenkins&style=flat-square&logo=jenkins&logoColor=white)
-![nexus](https://img.shields.io/endpoint?url=https%3A%2F%2Fstatus-badges.joshuagarrysalcedo.workers.dev%2Fnexus&style=flat-square&logo=sonatype&logoColor=white)
+![mesh](https://img.shields.io/endpoint?url=https://status.subscribers.chat/mesh&style=flat-square)
+![nats](https://img.shields.io/endpoint?url=https://status.subscribers.chat/nats&style=flat-square)
+![jenkins](https://img.shields.io/endpoint?url=https://status.subscribers.chat/jenkins&style=flat-square&logo=jenkins&logoColor=white)
+![nexus](https://img.shields.io/endpoint?url=https://status.subscribers.chat/nexus&style=flat-square&logo=sonatype&logoColor=white)
 
 ### Organization at a glance
 
