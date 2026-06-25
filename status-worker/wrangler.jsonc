@@ -22,8 +22,8 @@
     "NATS_WS_HOSTS": "[\"wss-japan.subscribers.chat\",\"wss-australia.subscribers.chat\",\"wss-singapore.subscribers.chat\"]",
     "JENKINS_URL": "https://jenkins.subscribers.chat",
     "NEXUS_URL": "https://nexus.subscribers.chat"
-  }
+  },
 
-  // After deploy, map a custom hostname so the badge URL is stable, e.g.:
-  // "routes": [{ "pattern": "status.subscribers.chat", "custom_domain": true }]
+  // Stable custom domain for the registry + badges. wrangler creates the DNS + route.
+  "routes": [{ "pattern": "status.subscribers.chat", "custom_domain": true }]
 }
