@@ -1,5 +1,9 @@
 name: deploy-status-worker
 
+# NOTE: this repo (subscribers-chat/.github) is PUBLIC, so it CANNOT call the org's
+# PRIVATE reusable workflows (GitHub blocks public→private reusables → "workflow was
+# not found"). Everything is therefore inlined here instead of `uses:`-ing them.
+
 on:
   workflow_dispatch:
   push:
@@ -8,8 +12,36 @@ on:
 
 jobs:
   deploy:
-    uses: subscribers-chat/workflow/.github/workflows/deploy-cloudflare.yml@main
-    with:
-      working-directory: status-worker
-      command: deploy
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install deps
+        working-directory: status-worker
+        run: bun install
+      - name: Deploy with wrangler
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: status-worker
+          command: deploy
+
+  # Telegram notify — inlined (can't use the private telegram-notify reusable from a
+  # public repo). Posts ✅/❌ to the CICD channel.
+  notify:
+    needs: deploy
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify CICD channel
+        env:
+          BOT_TOKEN: ${{ secrets.TELEGRAM_NOTIFICATION_CICD_BOT_TOKEN }}
+          RESULT: ${{ needs.deploy.result }}
+        run: |
+          set -euo pipefail
+          if [ "$RESULT" = "success" ]; then emoji="✅"; else emoji="❌"; fi
+          text="${emoji} Deploy status-worker → ${RESULT}  (${GITHUB_REPOSITORY}@${GITHUB_REF_NAME})"
+          curl -fsS -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+            -d chat_id="-1004324236020" \
+            --data-urlencode text="${text}" >/dev/null
+          echo "notified: ${text}"
