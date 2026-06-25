@@ -13,9 +13,13 @@
     // Tunnels to count in the /mesh badge. Empty array = count all. Here we
     // pin the prod servers and exclude the dev-machine tunnel.
     "MESH_TUNNELS": "[\"australia\",\"home\",\"japan\",\"singapore\"]",
-    // Public NATS WebSocket gateway hostnames. The Worker opens a wss connection
-    // to each and treats the NATS INFO frame as "alive".
-    "NATS_WS_HOSTS": "[\"japan-1.subscribers.chat\",\"au.subscribers.chat\",\"singapore-1.subscribers.chat\"]",
+    // Regions are AUTO-DISCOVERED from the tunnels (routes hitting NATS_WS_PORT) — leave
+    // this empty. Set a JSON array ONLY to pin/override discovery.
+    "NATS_REGIONS": "[]",
+    // The tunnel-origin port that marks a route as NATS websocket (used for discovery).
+    "NATS_WS_PORT": "8443",
+    // Fallback only (used if discovery finds nothing). Hosts the /nats badge probes.
+    "NATS_WS_HOSTS": "[\"wss-japan.subscribers.chat\",\"wss-australia.subscribers.chat\",\"wss-singapore.subscribers.chat\"]",
     "JENKINS_URL": "https://jenkins.subscribers.chat",
     "NEXUS_URL": "https://nexus.subscribers.chat"
   }
